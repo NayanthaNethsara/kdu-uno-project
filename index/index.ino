@@ -141,7 +141,18 @@ void handleWaste(const char *message, int num_beeps, int position)
   Serial.println(message);
   beep(num_beeps);
 
-  // choosing slide
+  if (num_beeps == 1)
+  {
+    // select metal dustbin
+  }
+  else if (num_beeps == 2)
+  {
+    // select wet dustbin
+  }
+  else if (num_beeps == 3)
+  {
+    // select dry dustbin
+  }
 
   moveAndOpenFlap(position);
 }
