@@ -2,11 +2,18 @@
 #include <AccelStepper.h>
 
 Servo flap;
-#define trigPin 7
-#define echoPin 6
+
+// Ultrasonic Variables
+#define trigPin 4
+#define echoPin 5
+
+// Stepper Variables
+const int DIR = 6;
+const int STEP = 7;
+const int steps_per_rev = 1000;
 
 int rain_pin = A3;
-a int inductive_pin = 10;
+int inductive_pin = 10;
 int flap_pin = 9;
 const int buzzer = 12;
 int homing_pin = 13;
@@ -26,6 +33,9 @@ void setup()
   initializeStepper();
   homeStepper();
 
+  pinMode(STEP, OUTPUT);
+  pinMode(DIR, OUTPUT);
+
   // Test servo to ensure it works
   Serial.println("Testing servo...");
   testServo();
@@ -35,8 +45,7 @@ void loop()
 {
   long distance = measureDistance();
   int inductive = digitalRead(inductive_pin);
-  inductive = 1;
-  int rain = 1000;
+  int rain = analogRead(rain_pin);
   printSensorData(distance, rain, inductive);
 
   if (inductive == 0)
@@ -131,6 +140,9 @@ void handleWaste(const char *message, int num_beeps, int position)
 {
   Serial.println(message);
   beep(num_beeps);
+
+  // choosing slide
+
   moveAndOpenFlap(position);
 }
 
