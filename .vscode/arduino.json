@@ -1,4 +1,3 @@
 {
-    "board": "arduino:avr:uno",
-    "sketch": "index\\index.ino"
+    "board": "arduino:avr:uno"
 }

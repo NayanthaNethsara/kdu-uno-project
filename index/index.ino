@@ -11,6 +11,7 @@ Servo flap;
 const int DIR = 6;
 const int STEP = 7;
 const int steps_per_rev = 1000;
+const int steps_per_bin = 333;
 
 int rain_pin = A3;
 int inductive_pin = 10;
@@ -33,6 +34,7 @@ void setup()
   initializeStepper();
   homeStepper();
 
+  // Intializing the Stepper Motor Pins
   pinMode(STEP, OUTPUT);
   pinMode(DIR, OUTPUT);
 
@@ -64,7 +66,6 @@ void loop()
   { // No waste
     handleNoWaste();
   }
-  // testServo();
   updateFlap();
 
   delay(1000); // Delay for visibility
@@ -144,14 +145,17 @@ void handleWaste(const char *message, int num_beeps, int position)
   if (num_beeps == 1)
   {
     // select metal dustbin
+    rotateStepper(0);
   }
   else if (num_beeps == 2)
   {
     // select wet dustbin
+    rotateStepper(steps_per_bin);
   }
   else if (num_beeps == 3)
   {
     // select dry dustbin
+    rotateStepper(2 * steps_per_bin);
   }
 
   moveAndOpenFlap(position);
@@ -172,6 +176,24 @@ void beep(int num_beeps)
     noTone(buzzer);
     delay(300);
   }
+}
+
+void rotateStepper(int steps)
+{
+  digitalWrite(DIR, steps > 0 ? HIGH : LOW);
+  steps = abs(steps);
+
+  for (int i = 0; i < steps; i++)
+  {
+    digitalWrite(STEP, HIGH);
+    delayMicroseconds(2000);
+    digitalWrite(STEP, LOW);
+    delayMicroseconds(2000);
+  }
+
+  Serial.print("Rotated stepper by ");
+  Serial.print(steps);
+  Serial.println(" steps.");
 }
 
 void moveAndOpenFlap(int position)
